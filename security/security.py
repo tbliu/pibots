@@ -8,6 +8,11 @@ import send_sms as sms
 import upload as flickr
 from multiprocessing import Process
 
+"""
+Reference:
+    https://hackernoon.com/raspberrypi-home-surveillance-with-only-150-lines-of-python-code-2701bd0373c9
+"""
+
 # Cleaning up images folder
 folder = "./images"
 for File in os.listdir(folder):
