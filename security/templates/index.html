@@ -1,0 +1,84 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Be Mobile Friendly -->
+  <meta name="viewport" content="width=device-width,height=device-height initial-scale=1">
+  <title>Security Camera</title>
+  <meta name="description" content="Security Camera Interface">
+  <meta name="author" content="Eren Golge. Modified by Timothy Liu">
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script>
+
+    var timeoutPeriod = 1000;
+    var imageURI = '../static/LiveFeed.jpg';
+    var x=0, y=0;
+    var img = new Image();
+    img.onload = function() {
+        var canvas = document.getElementById("x");
+        var context = canvas.getContext("2d");
+        context.drawImage(img, x, y);
+        setTimeout(timedRefresh, timeoutPeriod);
+    };
+
+    function timedRefresh() {
+        img.src = imageURI + '?d=' + Date.now();
+    }
+    // Sending start command to server
+    $(document).ready(function(){
+      $("#start_button").click(function(e){
+          e.preventDefault();
+        $.ajax({type: "POST",
+                url: "/start",
+                data: {},
+                success:function(result){
+        }});
+      });
+    });
+    
+    // Sending stop command to server
+    $(document).ready(function(){
+      $("#stop_button").click(function(e){
+          e.preventDefault();
+        $.ajax({type: "POST",
+                url: "/stop",
+                data: {},
+                success:function(result){
+        }});
+      });
+      
+      // Checking system status
+      (function worker() {
+         $.ajax({
+           url: '/status', 
+           success: function(data) {
+             $('#status_bar').html(data);
+           },
+           complete: function() {
+             // Schedule the next request when the current one's complete
+             setTimeout(worker, 5000);
+           }
+         });
+      })();
+    });
+    </script>
+
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+</head>
+
+<body onload="JavaScript:timedRefresh(1000);">
+  <h1>Security Camera</h1>
+  <span id="status_bar"></span>
+  </br>
+  </br>
+  <button id="start_button">Start recording</button>
+  <button id="stop_button">Stop recording</button>
+  <br>
+  <br>
+  <canvas id="x" width="640" height="480" /> 
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+</body>
+</html>
